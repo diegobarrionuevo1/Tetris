@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
+</head>
+<body>
+    <script src="tablero.js"></script>
+    <script>
+        const margenTablero = 10
+        let reguladorDeTeclas = 0
+        function setup (){
+            createCanvas(900,600)
+            crearMapeoBaseTetriminos()
+            tablero = new Tablero
+            tetrimino = new Tetrimino
+            
+            resizeCanvas(tablero.ancho+margenTablero*2,tablero.alto+margenTablero*2)
+        }
+        function draw (){
+            background("lightgray")
+            tablero.dibujar()
+            tetrimino.dibujar()
+            keyEventsTetrimino()
+        }
+        function keyEventsTetrimino(){
+            if(millis() - reguladorDeTeclas<100){
+                return
+            }
+            reguladorDeTeclas = millis()
+            if(keyIsDown(RIGHT_ARROW)){
+                tetrimino.moverDerecha()
+            }
+            if(keyIsDown(LEFT_ARROW)){
+                tetrimino.moverIzquierda()
+            }
+            if(keyIsDown(DOWN_ARROW)){
+                tetrimino.moverAbajo()
+            }
+            if(keyIsDown(UP_ARROW)){
+                tetrimino.moverArriba()
+            }
+        }
+
+        function crearMapeoBaseTetriminos () {
+            
+            tetriminosBase ={
+                "Z":{
+                    color:"red",
+                    mapa:[
+                        createVector(),
+                    ]
+                }
+            } 
+            
+        }
+
+        class Tetrimino{
+            constructor(nombre = "Z"){
+                this.nombre = nombre
+                let base = tetriminosBase[nombre]
+                this.color = base.color
+                this.mapa = []
+                for (const pMino of base.mapa) {
+                    this.mapa.push(pMino.copy())
+                }
+                this.posicion = createVector(0,0)
+            }
+            moverDerecha(){
+                this.posicion.x++
+            }
+            moverIzquierda(){
+                this.posicion.x--
+            }
+            moverAbajo(){
+                this.posicion.y++
+            }
+            moverArriba(){
+                this.posicion.y--
+            }
+            get mapaTablero(){
+                let retorno = [];
+                for (const pmino of this.mapa) {
+                    let copy = pmino.copy().add(this.posición);
+                    retorno.push(copy);
+                }
+                return retorno;
+            }
+
+            dibujar(){
+                push()
+                fill("red")
+                for (const pMino of this.mapa) {
+                    rect(pMino.x , pMino.y,tablero.lado_celda)
+                }
+                pop()
+            }
+        }
+    </script>
+</body>
+</html>
